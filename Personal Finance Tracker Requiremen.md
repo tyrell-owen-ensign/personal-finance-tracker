@@ -41,7 +41,6 @@ Stretch goals (not a part of the mvp):
 
 
 **Data Model**:
-
 Table: Transaction
 
 |id|INT, (primary key)|
@@ -54,8 +53,11 @@ Table: Transaction
 |created\_at|TIMESTAMP|
 |date|DATE|
 
+View: Balance
 
-
+|id|INT, (primary key)|
+|-|-|
+|balance|INT|
 
 
 Table: Category
@@ -93,7 +95,7 @@ The categories will also just be global so that I don't have to worry about hand
 |POST|/transactions|create a new transaction|
 |PUT|/transactions/:id|updates the specified transaction|
 |DELETE|/transactions/:id|deletes the specified transaction|
-|GET|/transactions?month=2026-05|Filter by month (for the history view)|
+|GET|/transactions?startDate=2026-01-01&endDate=2026-05-31|Returns the given date range. For a single month, provide the first and last days of the month|
 |GET|/categories|returns all categories|
 
 

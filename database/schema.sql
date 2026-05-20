@@ -1,3 +1,8 @@
+DROP VIEW IF EXISTS balance;
+DROP TABLE IF EXISTS transaction;
+DROP TABLE IF EXISTS category;
+DROP TYPE IF EXISTS transaction_type;
+
 CREATE TYPE transaction_type AS ENUM ('income', 'expense');
 
 CREATE TABLE category
@@ -19,3 +24,9 @@ CREATE TABLE transaction
     category_id INT REFERENCES category (id),
     created_at  TIMESTAMP DEFAULT NOW()
 );
+
+CREATE VIEW balance AS
+    SELECT
+        SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) -
+        SUM(CASE WHEN type - 'expense' THEN amount ELSE 0 END) AS total
+    FROM transaction;

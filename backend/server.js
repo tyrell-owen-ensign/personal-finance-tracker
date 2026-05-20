@@ -4,6 +4,11 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const cors = require('cors');
+
+app.use(cors({
+    origin: process.env.CLIENT_URL
+}));
 
 app.use(express.json());
 
@@ -33,12 +38,15 @@ app.get('/categories', async (req, res) => {
 // GET
 app.get('/transactions', async (req, res) => {
     try {
-        if (req.query.month == null) {
+        const {startDate, endDate} = req.query;
+        if (startDate && !endDate ||
+            !startDate && endDate) { // If we get a start or end date without the other
+            return res.status(400).json({message: 'Both startDate and endDate are required'});
+        } else if (!startDate && !endDate) { // GET all
             const result = await pool.query('SELECT * FROM transaction');
             res.json(result.rows);
-        } else {
-            const month = req.query.month;
-            const result = await pool.query("SELECT * FROM transaction WHERE to_char(date, 'YYYY-MM') = $1", [month]);
+        } else { // GET from the range
+            const result = await pool.query("SELECT * FROM transaction WHERE date BETWEEN $1 AND $2", [startDate, endDate]);
             res.json(result.rows);
         }
     } catch (error) {
@@ -93,6 +101,20 @@ app.delete('/transactions/:id', async (req, res) => {
         res.status(500).json({status: 'error'});
     }
 });
+
+
+// Balance Endpoint
+// GET
+app.get('/balance', async (req, res) => {
+    try {
+        const response = await pool.query("SELECT * FROM balance");
+        res.json(response.rows[0]);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({status: 'error'});
+    }
+});
+
 
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
