@@ -3,7 +3,11 @@
 function AddTransactionPage() {
 
     return (
-        <div></div>
+        <div>
+            <div>
+
+            </div>
+        </div>
     );
 }
 

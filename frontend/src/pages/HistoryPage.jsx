@@ -1,20 +1,19 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
+import './HistoryPage.css';
+import AddTransactionPage from "./AddTransactionPage.jsx";
 
 
 function HistoryPage() {
-    const getCurrentMonth = () => {
-        const today = new Date();
-        const year = today.getFullYear();
-        const monthStr = String(today.getMonth() + 1).padStart(2, "0");
-        return `${year}-${monthStr}`;
-    }
 
 
-    const [month, setMonth] = useState(getCurrentMonth());
+    const [month, setMonth] = useState(getCurrentDate());
     const [transactions, setTransactions] = useState([]);
     const [groupedTransactions, setGroupedTransactions] = useState([]);
     const [balance, setBalance] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [categories, setCategories] = useState([]);
+
 
     const groupByDate = (transactions) => {
         const grouped = transactions.reduce((acc, transaction) => {
@@ -38,7 +37,7 @@ function HistoryPage() {
      * @returns string
      */
     const createAPIArguments = () => {
-        const [ year, currentMonth ] = month.split('-');
+        const [year, currentMonth] = month.split('-');
         const lastDay = new Date(year, parseInt(currentMonth), 0);
         const lastDayString = String(lastDay.getDate()).padStart(2, "0");
         return `startDate=${year}-${currentMonth}-01&endDate=${year}-${currentMonth}-${lastDayString}`;
@@ -50,17 +49,25 @@ function HistoryPage() {
             setBalance(parseFloat(response.data.total));
         };
         fetchBalance();
+
+
+        const fetchCategories = async () => {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/categories`);
+            setCategories(response.data);
+        };
+        fetchCategories();
+
     }, []);
 
+    const fetchTransactions = async () => {
+        const url = `${import.meta.env.VITE_API_URL}/transactions?${createAPIArguments()}`;
+        const response = await axios.get(url);
+        setTransactions(response.data);
+
+        setGroupedTransactions(groupByDate(response.data));
+    };
+
     useEffect(() => {
-        const fetchTransactions = async () => {
-            const url = `${import.meta.env.VITE_API_URL}/transactions?${createAPIArguments()}`;
-            const response = await axios.get(url);
-            setTransactions(response.data);
-
-            setGroupedTransactions(groupByDate(response.data));
-        };
-
         try {
             fetchTransactions();
         } catch (error) {
@@ -148,9 +155,122 @@ function HistoryPage() {
             </div>
 
             {/* This button will be a floating action button to pop-up the add-transaction page */}
-            <button>Add</button>
+            <button onClick={() => setIsModalOpen(true)}>Add</button>
+            {isModalOpen &&
+                <AddTransactionModal onClose={() => setIsModalOpen(false)} onSuccess={() => fetchTransactions()}
+                                     categories={categories}/>}
         </div>
     );
+}
+
+function AddTransactionModal({onClose, onSuccess, categories, transaction}) {
+    const editTransaction = transaction != null; // We'll create a new transaction if there's no parameter passed
+
+    const transaction_id = transaction?.id;
+
+    const [name, setName] = useState(editTransaction ? transaction.name : '');
+    const handleNameChange = (e) => setName(e.target.value);
+
+    const [amount, setAmount] = useState(editTransaction ? transaction.amount : 0);
+    const handleAmountChange = (e) => setAmount(e.target.value);
+
+    const [date, setDate] = useState(editTransaction ? transaction.date.split('T')[0] : getCurrentDate());
+
+    const [category_id, setCategory_id] = useState(editTransaction ? transaction.category_id : 1);
+    const [transactionType, setTransactionType] = useState(editTransaction ? categories.find(c => c.id === transaction.category_id).type : 'expense');
+    const handleCategoryChange = (e) => {
+        const value = parseInt(e.target.value);
+        setCategory_id(value);
+        setTransactionType(categories.find(c => c.id === value).type);
+    };
+
+    const [description, setDescription] = useState(editTransaction ? transaction.description : '');
+    const handleDescriptionChange = (e) => setDescription(e.target.value);
+
+
+    const submitHandler = (e) => {
+        e.preventDefault();
+
+        const transactionData = {
+            name: name,
+            type: transactionType,
+            amount: amount,
+            date: date,
+            description: description,
+            category_id: category_id,
+        };
+
+        const API_URL = `${import.meta.env.VITE_API_URL}/transactions`;
+        if (transaction_id == null) { // We Need to Post a new transaction
+            const postTransaction = async () => {
+                const response = await axios.post(API_URL, transactionData);
+            }
+            try {
+                postTransaction();
+            } catch (error) {
+                console.error(error);
+            }
+        } else { // Call a PUT to edit a transaction
+            const putTransaction = async () => {
+                const response = await axios.put(API_URL + `${transaction_id}`, transactionData);
+            }
+            try {
+                putTransaction();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        onClose();
+        onSuccess();
+    };
+
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <h3>{editTransaction ? 'Edit' : 'Add'} Transaction</h3>
+                <form onSubmit={submitHandler}>
+                    <input type="text" placeholder="Name"
+                           value={name} onChange={handleNameChange} required/>
+
+                    <div>
+                        <label>{transactionType === 'income' ? '+' : '-'}$</label>
+                        <input type="number" placeholder="00.00"
+                               value={amount} onChange={handleAmountChange} required/>
+
+                        <select value={category_id} onChange={handleCategoryChange}>
+                            {categories.map(category => (
+                                <option key={category.id} value={category.id}>
+                                    {category.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <input type="date" value={date}
+                           onChange={(e) => setDate(e.target.value)}
+                           required/>
+
+                    <textarea placeholder="Description"
+                              value={description} onChange={handleDescriptionChange}/>
+
+                    <button type="submit">
+                        {editTransaction ? 'Save' : 'Add'}
+                    </button>
+                </form>
+
+
+            </div>
+        </div>
+    );
+}
+
+function getCurrentDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const monthStr = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    return `${year}-${monthStr}-${day}`;
 }
 
 export default HistoryPage;
