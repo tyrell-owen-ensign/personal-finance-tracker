@@ -1,3 +1,8 @@
+
+
+
+/* This is all for the Add Transaction Page Modal*/
+
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -12,8 +17,8 @@
 }
 
 .modal-content {
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
+    background: var(--color-surface);
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
     width: 400px;
 }

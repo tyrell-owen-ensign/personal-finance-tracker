@@ -1,12 +1,17 @@
 import './NavBar.css';
-import { Link } from 'react-router-dom';
+import {NavLink} from 'react-router-dom';
 
 function NavBar() {
 
     return (
-        <div>
-            <Link to="/">History</Link>
-            <Link to="/chart">Chart</Link>
+        <div className="NavBar">
+            <NavLink to="/"
+                     className="nav-link">
+                History
+            </NavLink>
+            <NavLink to="/chart" end className="nav-link">
+                Chart
+            </NavLink>
         </div>
     );
 }
