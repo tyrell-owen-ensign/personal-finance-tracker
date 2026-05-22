@@ -1,4 +1,121 @@
+/* Month Picker */
+.month-picker {
+    display: flex;
+    flex-direction: row;
+    gap: var(--spacing-sm);
+    justify-content: center;
+}
 
+
+/* Transaction History */
+.balance-view {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.balance-negative {
+    color: var(--color-expense);
+}
+
+.balance-positive {
+    color: var(--color-income);
+}
+
+
+/* Transaction View */
+.transaction-view {
+    background-color: var(--color-surface-dark);
+    margin: var(--spacing-xl);
+    margin-top: 0;
+    border-radius: var(--border-radius);
+}
+
+.transaction-day {
+    display: flex;
+    flex-direction: column;
+}
+
+.transaction-day-label {
+    background-color: var(--color-surface);
+    box-sizing: border-box;
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
+}
+
+.transaction-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position: relative;
+    border-radius: var(--border-radius);
+    transition: all 0.2s ease;
+}
+
+.delete-button {
+    display: none;
+    margin: var(--spacing-md);
+    border-radius: var(--border-radius);
+    border: none;
+}
+
+.transaction-item:hover .delete-button {
+    display: block;
+}
+
+.transaction-item:hover {
+    background-color: var(--color-surface-hover);
+}
+
+.delete-button:hover {
+    background-color: var(--color-accent);
+}
+
+.transaction-income, .transaction-expense {
+    display: flex;
+    flex-direction: row;
+    gap: var(--spacing-sm);
+    margin-left: var(--spacing-xl);
+}
+
+
+.transaction-income {
+    color: var(--color-income);
+}
+
+.transaction-expense {
+    color: var(--color-expense);
+
+}
+
+/* Floating Action Button */
+.action-button {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    margin: var(--spacing-xl);
+    right: 0;
+    bottom: 0;
+
+    background-color: var(--color-primary);
+    color: var(--color-text);
+    font-weight: 700;
+
+    transition: all 0.2s ease;
+}
+
+.action-button:hover {
+    background-color: var(--color-accent);
+    color: black;
+}
 
 
 /* This is all for the Add Transaction Page Modal*/
@@ -18,7 +135,7 @@
 
 .modal-content {
     background: var(--color-surface);
-    padding: var(--spacing-sm);
+    padding: var(--spacing-lg);
     border-radius: var(--border-radius);
     width: 400px;
 }

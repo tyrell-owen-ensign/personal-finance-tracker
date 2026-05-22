@@ -13,6 +13,7 @@ function HistoryPage() {
     const [balance, setBalance] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [categories, setCategories] = useState([]);
+    const [selectedTransaction, setSelectedTransaction] = useState(null);
 
 
     const groupByDate = (transactions) => {
@@ -114,12 +115,29 @@ function HistoryPage() {
         const daysOfTheWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         const date = new Date(dateString + "T00:00:00"); // add the time to the date to prevent UTC bug
         return daysOfTheWeek[date.getDay()];
-    }
+    };
+
+    const handleTransactionClick = (transaction) => {
+        setSelectedTransaction(transaction);
+        setIsModalOpen(true);
+    };
+
+    const handleDelete = async (transaction_id) => {
+        const confirmed = confirm("Are you sure you want to delete this transaction?");
+        if (confirmed) {
+            try {
+                await axios.delete(`${import.meta.env.VITE_API_URL}/transactions/${transaction_id}`);
+                fetchTransactions();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    };
 
     return (
         <div>
             {/* Month Picker */}
-            <div>
+            <div className="month-picker">
                 <button onClick={() => changeMonth(-1)}>Previous
                 </button>
 
@@ -132,22 +150,34 @@ function HistoryPage() {
             </div>
 
             {/* Balance View */}
-            <div className={balance < 0 ? 'balance-negative' : 'balance-positive'}>
-                <h3>${balance}</h3>
+            <div className="balance-view">
+                <h3>Balance:</h3>
+                <h3 className={balance < 0 ? 'balance-negative' : 'balance-positive'}>${balance}</h3>
             </div>
 
 
             {/* Transaction View */}
-            <div>
+            <div className="transaction-view">
                 {groupedTransactions.map((group) => (
-                    <div key={group.date}>
-                        <h4>{group.date.split('-')[2] + ' - ' + getDayOfWeek(group.date)}</h4>
+                    <div key={group.date} className="transaction-day">
+                        <h4 className="transaction-day-label">{group.date.split('-')[2] + ' - ' + getDayOfWeek(group.date)}</h4>
                         {group.transactions.map((transaction) => (
                             <div key={transaction.id}
-                                 className={transaction.type === 'income' ? 'transaction-income' : 'transaction-expense'}>
-                                <p>{transaction.type === 'income' ? '+' : '-'}</p>
-                                <p>{transaction.name}</p>
-                                <p>${transaction.amount}</p>
+                                 className="transaction-item"
+                                 onClick={() => handleTransactionClick(transaction)}>
+                                <div
+                                    className={transaction.type === 'income' ? 'transaction-income' : 'transaction-expense'}>
+                                    <p>{transaction.type === 'income' ? '+' : '-'}</p>
+                                    <p>{transaction.name}</p>
+                                    <p>${transaction.amount}</p>
+                                </div>
+                                <button className="delete-button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDelete(transaction.id);
+                                        }}>
+                                    Delete
+                                </button>
                             </div>
                         ))}
                     </div>
@@ -155,9 +185,10 @@ function HistoryPage() {
             </div>
 
             {/* This button will be a floating action button to pop-up the add-transaction page */}
-            <button onClick={() => setIsModalOpen(true)}>Add</button>
+            <button onClick={() => setIsModalOpen(true)} className="action-button">Add</button>
             {isModalOpen &&
-                <AddTransactionModal onClose={() => setIsModalOpen(false)} onSuccess={() => fetchTransactions()}
+                <AddTransactionModal transaction={selectedTransaction} onClose={() => setIsModalOpen(false)}
+                                     onSuccess={() => fetchTransactions()}
                                      categories={categories}/>}
         </div>
     );

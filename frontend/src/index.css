@@ -3,10 +3,12 @@
 :root {
   --color-background: #242424;
   --color-surface: #616161;
+  --color-surface-dark: #333333;
+  --color-surface-hover: #524747;
   --color-primary: #7D42AE;
   --color-primary-dark: #341C4A;
-  --color-accent: #A5AD42;
-  --color-accent-dark: #79852E;
+  --color-accent: #73f3bd;
+  --color-accent-dark: #4aa07c;
   --color-text: #ffffff;
   --color-text-muted: #c4c4c4;
   --color-income: #4caf50;
