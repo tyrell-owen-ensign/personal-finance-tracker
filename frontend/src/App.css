@@ -22,3 +22,21 @@ button:hover {
   background-color: var(--color-accent);
   color: var(--color-text-dark);
 }
+
+input {
+  border-radius: var(--border-radius);
+  border: none;
+  padding: var(--spacing-sm);
+}
+
+select {
+  border-radius: var(--border-radius);
+  border: none;
+  padding: var(--spacing-sm);
+}
+
+textarea {
+  border-radius: var(--border-radius);
+  border: none;
+  padding: var(--spacing-sm);
+}

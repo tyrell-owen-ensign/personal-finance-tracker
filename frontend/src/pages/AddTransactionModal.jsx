@@ -59,9 +59,6 @@ function AddTransactionModal({onClose, onSuccess, categories, transaction}) {
     return (
         <div className="modal-overlay">
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <div className="close-button">
-                    <button onClick={onClose}>Close</button>
-                </div>
                 <h3 className="modal-title">{editTransaction ? 'Edit' : 'Add'} Transaction</h3>
                 <form onSubmit={submitHandler}
                       className="modal-form">
@@ -97,6 +94,7 @@ function AddTransactionModal({onClose, onSuccess, categories, transaction}) {
                         <button type="submit">
                             {editTransaction ? 'Save' : 'Add'}
                         </button>
+                        <button onClick={onClose}>Close</button>
                     </div>
                 </form>
 
