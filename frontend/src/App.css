@@ -4,3 +4,21 @@ body {
   font-family: var(--font-family);
   margin: 0;
 }
+
+button {
+  border: none;
+  border-radius: var(--border-radius);
+
+  background-color: var(--color-primary);
+  color: var(--color-text);
+
+  transition: all 0.2s ease;
+
+  width: fit-content;
+  padding: var(--spacing-sm);
+}
+
+button:hover {
+  background-color: var(--color-accent);
+  color: var(--color-text-dark);
+}

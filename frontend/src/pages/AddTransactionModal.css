@@ -1,0 +1,64 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: var(--color-surface);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    width: 400px;
+}
+
+.close-button {
+    display: flex;
+    justify-content: right;
+}
+
+.modal-title {
+    display: flex;
+    justify-content: center;
+}
+
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.modal-amount-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.amount-input-income {
+    color: var(--color-income);
+    background: white;
+}
+.amount-input-expense {
+    color: var(--color-expense);
+    background: white;
+}
+
+.modal-date-picker {
+    width: fit-content;
+}
+
+.modal-description-box {
+    resize: none;
+    field-sizing: content;
+}
+
+.submit-button {
+    display: flex;
+    justify-content: center;
+}
