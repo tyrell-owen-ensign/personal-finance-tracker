@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import axios from 'axios';
 import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts';
-import HistoryPage from "./HistoryPage.jsx";
+import './ChartPage.css';
 
 
 function ChartPage() {
@@ -11,8 +11,8 @@ function ChartPage() {
 
     // Checkbox Variables
     const [viewTotal, setViewTotal] = useState(true);
-    const [viewIncome, setViewIncome] = useState(true);
-    const [viewExpense, setViewExpense] = useState(true);
+    const [viewIncome, setViewIncome] = useState(false);
+    const [viewExpense, setViewExpense] = useState(false);
     const [viewBills, setViewBills] = useState(false);
     const [viewPersonal, setViewPersonal] = useState(false);
     const [viewGroceries, setViewGroceries] = useState(false);
@@ -124,7 +124,7 @@ function ChartPage() {
 
 
     return (
-        <div>
+        <div className="chart-page">
             <ResponsiveContainer width="100%" height={400}>
                 <LineChart data={transactions}>
                     <CartesianGrid stokeDasharray="3 3"/>
@@ -132,95 +132,94 @@ function ChartPage() {
                     <YAxis/>
                     <Tooltip/>
                     <Legend/>
-                    {viewTotal && <Line type="monotone" dataKey="Total" stroke="#999999"/>}
+                    {viewTotal && <Line type="linear" dataKey="Total" stroke="#999999"/>}
 
-                    {viewIncome && <Line type="monotone" dataKey="Income" stroke="#00ff00"/>}
-                    {viewGifts && <Line type="monotone" dataKey="Gifts" stroke={categories.find(c => c.name === 'Gifts').color}/>}
-                    {viewWork && <Line type="monotone" dataKey="Work" stroke={categories.find(c => c.name === 'Work').color}/>}
-                    {viewSideJobs && <Line type="monotone" dataKey="Side-Jobs" stroke={categories.find(c => c.name === 'Side-Jobs').color}/>}
+                    {viewIncome && <Line type="linear" dataKey="Income" stroke="#00ff00"/>}
+                    {viewGifts &&
+                        <Line type="linear" dataKey="Gifts" stroke={categories.find(c => c.name === 'Gifts').color}/>}
+                    {viewWork &&
+                        <Line type="linear" dataKey="Work" stroke={categories.find(c => c.name === 'Work').color}/>}
+                    {viewSideJobs && <Line type="linear" dataKey="Side-Jobs"
+                                           stroke={categories.find(c => c.name === 'Side-Jobs').color}/>}
 
-                    {viewExpense && <Line type="monotone" dataKey="Expense" stroke="#ff0000"/>}
-                    {viewBills && <Line type="monotone" dataKey="Bills" stroke={categories.find(c => c.name === 'Bills').color}/>}
-                    {viewPersonal && <Line type="monotone" dataKey="Personal" stroke={categories.find(c => c.name === 'Personal').color}/>}
-                    {viewGroceries && <Line type="monotone" dataKey="Groceries" stroke={categories.find(c => c.name === 'Groceries').color}/>}
-                    {viewFood && <Line type="monotone" dataKey="Food" stroke={categories.find(c => c.name === 'Food').color}/>}
+                    {viewExpense && <Line type="linear" dataKey="Expense" stroke="#ff0000"/>}
+                    {viewBills &&
+                        <Line type="linear" dataKey="Bills" stroke={categories.find(c => c.name === 'Bills').color}/>}
+                    {viewPersonal && <Line type="linear" dataKey="Personal"
+                                           stroke={categories.find(c => c.name === 'Personal').color}/>}
+                    {viewGroceries && <Line type="linear" dataKey="Groceries"
+                                            stroke={categories.find(c => c.name === 'Groceries').color}/>}
+                    {viewFood &&
+                        <Line type="linear" dataKey="Food" stroke={categories.find(c => c.name === 'Food').color}/>}
                 </LineChart>
             </ResponsiveContainer>
-            <div>
+            <div className="date-range-picker">
                 <button onClick={() => handleRangeChange(1)}>1mo</button>
                 <button onClick={() => handleRangeChange(3)}>3mo</button>
                 <button onClick={() => handleRangeChange(6)}>6mo</button>
                 <button onClick={() => handleRangeChange(12)}>12mo</button>
                 <button onClick={() => handleRangeChange(0)}>All</button>
             </div>
-            <div>
-                <label>
-                    <input
-                        type="checkbox"
-                        checked={viewTotal}
-                        onChange={() => setViewTotal(!viewTotal)}
-                    />
-                    Total
-                </label>
-                <label>
-                    <input type="checkbox" checked={viewIncome}
-                           onChange={() => setViewIncome(!viewIncome)}/>
-                    Income
-                </label>
-                <button onClick={() => setViewIncomeDropdown(!viewIncomeDropdown)}>
-                    {viewIncomeDropdown ? '▼' : '►'}
-                </button>
-                {viewIncomeDropdown && (
-                    <div>
-                        <label>
+            <div className="category-picker-box">
+                <div className="category-picker">
+                    <label>
+                        <input
+                            type="checkbox"
+                            checked={viewTotal}
+                            onChange={() => setViewTotal(!viewTotal)}
+                        />
+                        Total
+                    </label>
+                    <label>
+                        <input type="checkbox" checked={viewIncome}
+                               onChange={() => setViewIncome(!viewIncome)}/>
+                        Income
+                    </label>
+                    <div className={`dropdown-section ${!viewIncome ? 'hidden' : ''}`}>
+                        <label className="dropdown-box">
                             <input type="checkbox" checked={viewGifts}
                                    onChange={() => setViewGifts(!viewGifts)}/>
                             Gifts
                         </label>
-                        <label>
+                        <label className="dropdown-box">
                             <input type="Checkbox" checked={viewWork}
                                    onChange={() => setViewWork(!viewWork)}/>
                             Work
                         </label>
-                        <label>
+                        <label className="dropdown-box">
                             <input type="checkbox" checked={viewSideJobs}
                                    onChange={() => setViewSideJobs(!viewSideJobs)}/>
                             Side-Jobs
                         </label>
                     </div>
-                )}
-                <label>
-                    <input type="checkbox" checked={viewExpense}
-                           onChange={() => setViewExpense(!viewExpense)}/>
-                    Expense
-                    <button onClick={() => setViewExpenseDropdown(!viewExpenseDropdown)}>
-                        {viewExpenseDropdown ? '▼' : '►'}
-                    </button>
-                </label>
-                {viewExpenseDropdown && (
-                    <div>
-                        <label>
+                    <label>
+                        <input type="checkbox" checked={viewExpense}
+                               onChange={() => setViewExpense(!viewExpense)}/>
+                        Expense
+                    </label>
+                    <div className={`dropdown-section ${!viewExpense ? 'hidden' : ''}`}>
+                        <label className="dropdown-box">
                             <input type="checkbox" checked={viewBills}
                                    onChange={() => setViewBills(!viewBills)}/>
                             Bills
                         </label>
-                        <label>
+                        <label className="dropdown-box">
                             <input type="checkbox" checked={viewPersonal}
                                    onChange={() => setViewPersonal(!viewPersonal)}/>
                             Personal
                         </label>
-                        <label>
+                        <label className="dropdown-box">
                             <input type="checkbox" checked={viewGroceries}
                                    onChange={() => setViewGroceries(!viewGroceries)}/>
                             Groceries
                         </label>
-                        <label>
+                        <label className="dropdown-box">
                             <input type="checkbox" checked={viewFood}
                                    onChange={() => setViewFood(!viewFood)}/>
                             Food
                         </label>
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );
